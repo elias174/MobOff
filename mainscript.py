@@ -7,6 +7,8 @@ import subprocess
 import json
 import click
 
+from utils import select_directory
+
 
 @click.group()
 def cli():
@@ -52,6 +54,7 @@ def download(link, newdevice, video, delete):
             for p in data['user']:
                 api_key = p['api_key']
                 device = p['device']
+                directory = p['directory']
     else:
         click.secho(
             "Please run `moboff initialise` first.",
@@ -59,7 +62,7 @@ def download(link, newdevice, video, delete):
             bold=True)
         quit()
 
-    os.chdir('Music')
+    os.chdir(directory)
 
     if video is True:
         downloadcommand = ["youtube-dl",
@@ -153,16 +156,19 @@ def initialise():
 
     device_id = int(rawinput()) - 1
 
-    if not os.path.exists('Music'):
-        os.makedirs('Music')
     click.secho(
-        "The music would be downloaded to {0}/Music".format(os.getcwd()))
+        "Please Select a directory for store the Downloads", bold=True)
+    directory = select_directory()
+
+    click.secho(
+        "The music would be downloaded to {0}".format(directory))
 
     data = {}
     data['user'] = []
     data['user'].append({
         'api_key': api_key,
         'device': str(pb.devices[device_id]),
+        'directory': directory
     })
     with open('data.txt', 'w') as outfile:
         json.dump(data, outfile)
