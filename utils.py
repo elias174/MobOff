@@ -1,6 +1,8 @@
-from tkinter import Tk
-from tkinter import filedialog
-
+try:
+    from Tkinter import Tk
+    import tkFileDialog as filedialog
+except ImportError:
+    from tkinter import Tk, filedialog
 
 def select_directory():
     root = Tk()
